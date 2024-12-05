@@ -1,38 +1,66 @@
-import { dodajNowegoPracownika, dodajPracownika, dodajPracownikówZListy, zwolnijPracownika } from "./pracownicy.js";
+import {
+  dodajNowegoPracownika,
+  dodajPracownika,
+  dodajPracownikówZListy,
+  zwolnijPracownika,
+} from "./pracownicy.js";
 import { generujRaport } from "./raporty.js";
+import { Pracownik, PaniBasia, Waluta } from "./types/pracownikTypes.js";
+import {
+  Raport,
+  RaportPracownika,
+  RaportPracowników,
+  RaportPieseczka,
+} from "./types/raportTypes.js";
 
-export const listaPracowników = [];
+export const listaPracowników: Pracownik[] = [];
 
-const paniBasia = {
-    id: 0,
-    imie: "Basia",
-    nazwisko: "Kowalska",
-    stanowisko: "Księgowa",
-    //pensja: ??,
-    graNaSkrzypcach: "pięknie",
-    bezNiejTenZakładUpadnie: true
-}
+const paniBasia: PaniBasia = {
+  id: 0,
+  imie: "Basia",
+  nazwisko: "Kowalska",
+  stanowisko: "pani basia",
+  pensja: [3000, Waluta.Złoty_Polski_Peelen],
+  pseudonim: "Basia",
+  graNaSkrzypcach: "pięknie",
+  bezNiejTenZakładUpadnie: true,
+};
 
 const uruchomDzieńPracy = async () => {
-    dodajNowegoPracownika("Jan", "Kowalski", "Sprzątacz", /* ?? ---> */ 0);
-    dodajPracownikówZListy();
-    dodajPracownika(paniBasia);
-    zwolnijPracownika(0, 1);
+  dodajNowegoPracownika("Jan", "Kowalski", "podbutnik", [
+    3000,
+    Waluta.Złoty_Polski_Peelen,
+  ]);
+  dodajPracownikówZListy();
+  dodajPracownika(paniBasia);
+  zwolnijPracownika(1, "picie w pracy");
 
-    const efektyPracy = {
-        obniżonaEfektywność: true,
-        spadekPensji: 1000
-    };
-    const raportPracownika = generujRaport(efektyPracy, 0, "brak");
-    const raportPracowników = generujRaport({
-        0: efektyPracy,
-        1: efektyPracy
-    }, 0, "brak");
-    const raportPieseczka = await generujRaport({szczekanie: true, isPies: true, aKtoToJestTakimSłodkimPieseczkiem: true}, 0, "brak");
+  const efektyPracy = {
+    obniżonaEfektywność: true,
+    spadekPensji: 1000,
+  };
+  const raportPracownika = (await generujRaport(
+    efektyPracy,
+    0,
+    "brak"
+  )) as RaportPracownika;
+  const raportPracowników = (await generujRaport(
+    {
+      0: efektyPracy,
+      1: efektyPracy,
+    },
+    0,
+    "brak"
+  )) as RaportPracowników;
+  const raportPieseczka = (await generujRaport(
+    { szczekanie: true, isPies: true, aKtoToJestTakimSłodkimPieseczkiem: true },
+    0,
+    "brak"
+  )) as RaportPieseczka;
 
-    if(raportPieseczka.isPies){
-        console.log("Dobra psinka!");
-    }
-}
+  if (raportPieseczka.isPies) {
+    console.log("Dobra psinka!");
+  }
+};
 
 uruchomDzieńPracy();
